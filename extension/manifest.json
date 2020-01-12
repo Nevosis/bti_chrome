@@ -11,6 +11,10 @@
 	},
 
 	"content_scripts": [
+        { 
+            "js": [ "jquery.min.js" ], 
+            "matches": [ "http://*/*", "https://*/*"] 
+        },
 		{
 			"matches": ["*://*.youtube.com/watch?*"],
 			"js": ["contentScript.js"]
