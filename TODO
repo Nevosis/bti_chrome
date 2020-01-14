@@ -15,3 +15,10 @@ III. Permettre la reception des reportings sur le front
 
 
 
+########################
+
+Le bouton pour reporter devrait etre dans la html popup :
+	. Difficulté de manipuler propement le DOM
+	. Aspect intrusif du bouton de report
+
+La reception du report par contre doit etre VISIBLE !!!!
