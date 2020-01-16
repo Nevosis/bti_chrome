@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"description": "Description",
 
-	"permissions": ["storage", "tabs"],
+	"permissions": ["tabs", "identity", "identity.email"],
 
 	"background": {
 		"scripts": ["background.js"],

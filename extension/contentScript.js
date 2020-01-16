@@ -1,4 +1,5 @@
 var justInCase = 10;
+};
 
 function initClick() {
 	$(".btn-balancetoninfluence").click(function() {
@@ -6,17 +7,20 @@ function initClick() {
 
 		let channelNode = $("#channel-name > div > div > #text > a");
 		if (channelNode && channelNode.length) {
-			let channelName = channelNode[0].innerText 
-			let channelUrl = channelNode[0].href
-			alert(`REPORTING DE :\n${channelName}\n${channelUrl}`);
-			console.log(channelNode[0].innerText);
-			console.log(channelNode[0].href);
+			let channelName = channelNode[0].innerText;
+			let channelUrl = channelNode[0].href;
+			alert(
+				`REPORTING DE :\n${channelName}\n${channelUrl}\n`
+			);
+
+			// Send to background channelId to report
+			chrome.runtime.sendMessage({ channelName, channelUrl });
 		}
 	});
 }
 
 function initContentScript() {
-	console.log("initContentScript")
+	console.log("initContentScript");
 	updateDom();
 
 	let bloc = $("#container > #top-row");
@@ -25,7 +29,8 @@ function initContentScript() {
 		initClick();
 		justInCase = 10;
 	} else {
-		justInCase--;
+		// page still loading.
+		justInCase--; // used to avoid infinite loop. Cast once every .5s for 5s
 		if (justInCase > 0) {
 			setTimeout(initContentScript, 500);
 		}
@@ -33,6 +38,7 @@ function initContentScript() {
 }
 
 // overide css of existing dom element
+// Comic Sans MS MASTERRACE
 function updateDom() {
 	$(".title .ytd-video-primary-info-renderer").css(
 		"font-family",
