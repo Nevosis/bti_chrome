@@ -6,7 +6,7 @@
 	"permissions": ["tabs", "identity", "identity.email"],
 
 	"background": {
-		"scripts": ["background.js"],
+		"scripts": ["jquery.min.js", "background.js"],
 		"persistent": false
 	},
 

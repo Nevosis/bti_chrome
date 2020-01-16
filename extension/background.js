@@ -9,8 +9,24 @@ chrome.identity.getProfileUserInfo(identity => {
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	let reportObj = { ...request, userEmail, userId };
-	console.log(reportObj);
+	const { channelName, channelUrl } = request;
+
+	$.post(
+		"http://5.135.184.31:3001/report",
+		{
+			reporterId: userId,
+			reporterMail: userEmail,
+			reportedName: channelName,
+			reportedId: channelUrl
+		},
+		resp => {
+			console.log(resp);
+		}
+	);
+
+	// DEBUG
+	let reportObjDebug = { ...request, userEmail, userId };
+	console.log(reportObjDebug);
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {

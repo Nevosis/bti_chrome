@@ -1,5 +1,4 @@
 var justInCase = 10;
-};
 
 function initClick() {
 	$(".btn-balancetoninfluence").click(function() {
@@ -9,9 +8,6 @@ function initClick() {
 		if (channelNode && channelNode.length) {
 			let channelName = channelNode[0].innerText;
 			let channelUrl = channelNode[0].href;
-			alert(
-				`REPORTING DE :\n${channelName}\n${channelUrl}\n`
-			);
 
 			// Send to background channelId to report
 			chrome.runtime.sendMessage({ channelName, channelUrl });
@@ -20,8 +16,8 @@ function initClick() {
 }
 
 function initContentScript() {
-	console.log("initContentScript");
 	updateDom();
+	console.log("initContentScript");
 
 	let bloc = $("#container > #top-row");
 	if (bloc && bloc[0]) {
@@ -53,8 +49,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		request.action === "update" &&
 		request.url.includes("youtube.com/watch?")
 	) {
-		updateDom();
-
 		let bloc = $("#btn-balancetoninfluence");
 		if (!(bloc && bloc[0])) {
 			initContentScript();
