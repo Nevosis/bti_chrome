@@ -11,18 +11,35 @@ chrome.identity.getProfileUserInfo(identity => {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	const { channelName, channelUrl } = request;
 
-	$.post(
-		"http://5.135.184.31:3001/report",
-		{
+	if (request.action === "sendReport") {
+		$.post("http://5.135.184.31:3001/report", {
 			reporterId: userId,
 			reporterMail: userEmail,
 			reportedName: channelName,
 			reportedId: channelUrl
-		},
-		resp => {
-			console.log(resp);
-		}
-	);
+		})
+			.done(resp => {
+				console.log("success send report");
+				console.log(resp);
+			})
+			.fail(err => {
+				console.log("error send report");
+				console.log(err);
+			});
+	} else if (request.action === "getReport") {
+		$.get("http://5.135.184.31:3001/report", {
+			reportedName: channelName,
+			reportedId: channelUrl
+		})
+			.done(resp => {
+				console.log("success GET report");
+				console.log(resp);
+			})
+			.fail(err => {
+				console.log("error GET report");
+				console.log(err);
+			});
+	}
 
 	// DEBUG
 	let reportObjDebug = { ...request, userEmail, userId };

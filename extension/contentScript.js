@@ -1,4 +1,31 @@
 var justInCase = 10;
+function getReport() {
+	if (!document.url.includes("youtube.com/watch?")) {
+		console.log("GET REPORT");
+		console.log(document.URL);
+
+		setTimeout(() => {
+			let channelNode = $("#channel-name > div > div > #text > a");
+			let channelName = channelNode[0].innerText;
+			let channelUrl = channelNode[0].href;
+
+			chrome.runtime.sendMessage({
+				action: "getReport",
+				channelName,
+				channelUrl
+			});
+		}, 500);
+		
+	}
+}
+
+window.addEventListener("yt-navigate-start", () => {
+	console.log("yt-navigate-start");
+}); 
+window.addEventListener("yt-navigate-finish", () => {
+	console.log("yt-navigate-finish");
+	getReport();
+});
 
 function initClick() {
 	$(".btn-balancetoninfluence").click(function() {
@@ -10,17 +37,24 @@ function initClick() {
 			let channelUrl = channelNode[0].href;
 
 			// Send to background channelId to report
-			chrome.runtime.sendMessage({ channelName, channelUrl });
+			chrome.runtime.sendMessage({
+				action: "sendReport",
+				channelName,
+				channelUrl
+			});
 		}
 	});
 }
 
-function initContentScript() {
+function initContentScript(boule) {
 	updateDom();
 	console.log("initContentScript");
 
 	let bloc = $("#container > #top-row");
 	if (bloc && bloc[0]) {
+		if (boule) {
+			getReport();
+		}
 		bloc.append(button);
 		initClick();
 		justInCase = 10;
@@ -28,7 +62,7 @@ function initContentScript() {
 		// page still loading.
 		justInCase--; // used to avoid infinite loop. Cast once every .5s for 5s
 		if (justInCase > 0) {
-			setTimeout(initContentScript, 500);
+			setTimeout(() => initContentScript(boule), 500);
 		}
 	}
 }
@@ -51,10 +85,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	) {
 		let bloc = $("#btn-balancetoninfluence");
 		if (!(bloc && bloc[0])) {
-			initContentScript();
+			initContentScript(false);
 		}
 		return;
 	}
 });
 
-initContentScript();
+initContentScript(true);
