@@ -3,7 +3,6 @@ var userId = "";
 
 // Init users credentials
 chrome.identity.getProfileUserInfo(identity => {
-	console.log(identity);
 	userEmail = identity.email;
 	userId = identity.id;
 });
@@ -26,15 +25,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				console.log(err);
 			});
 	} else if (request.action === "getReport") {
-		$.post(
-			`http://5.135.184.31:3001/report/${channelName}`,
-			{
-				channelId: channelUrl
-			}
-		)
-			.done(resp => {
+		$.post(`http://5.135.184.31:3001/report/${channelName}`, {
+			channelId: channelUrl
+		})
+			.done(reports => {
 				console.log("success GET report");
-				console.log(resp);
+				console.log(reports);
+				sendResponse({
+					action: "getReportSuccess",
+					reports
+				});
 			})
 			.fail(err => {
 				console.log("error GET report");
@@ -45,6 +45,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	// DEBUG
 	let reportObjDebug = { ...request, userEmail, userId };
 	console.log(reportObjDebug);
+
+	return true;
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
