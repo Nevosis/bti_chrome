@@ -10,7 +10,7 @@ chrome.identity.getProfileUserInfo(identity => {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	const { channelName, channelUrl } = request;
 	if (request.action === "sendReport") {
-		$.post("http://5.135.184.31:3001/report", {
+		$.post(backendUrl + "/report", {
 			reporterId: userId,
 			reporterMail: userEmail,
 			reportedName: channelName,
@@ -25,7 +25,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				console.log(err);
 			});
 	} else if (request.action === "getReport") {
-		$.post(`http://5.135.184.31:3001/report/${channelName}`, {
+		$.post(`${backendUrl}/report/${channelName}`, {
 			channelId: channelUrl
 		})
 			.done(reports => {
