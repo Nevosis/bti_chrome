@@ -1,6 +1,6 @@
 var justInCase = 10;
 function getReport() {
-	if (!document.url.includes("youtube.com/watch?")) {
+	if (document.URL.includes("youtube.com/watch?")) {
 		console.log("GET REPORT");
 		console.log(document.URL);
 
@@ -15,7 +15,6 @@ function getReport() {
 				channelUrl
 			});
 		}, 500);
-		
 	}
 }
 
@@ -46,13 +45,13 @@ function initClick() {
 	});
 }
 
-function initContentScript(boule) {
+function initContentScript(first) {
 	updateDom();
 	console.log("initContentScript");
 
 	let bloc = $("#container > #top-row");
 	if (bloc && bloc[0]) {
-		if (boule) {
+		if (first) {
 			getReport();
 		}
 		bloc.append(button);
@@ -62,7 +61,7 @@ function initContentScript(boule) {
 		// page still loading.
 		justInCase--; // used to avoid infinite loop. Cast once every .5s for 5s
 		if (justInCase > 0) {
-			setTimeout(() => initContentScript(boule), 500);
+			setTimeout(() => initContentScript(first), 500);
 		}
 	}
 }

@@ -10,7 +10,6 @@ chrome.identity.getProfileUserInfo(identity => {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	const { channelName, channelUrl } = request;
-
 	if (request.action === "sendReport") {
 		$.post("http://5.135.184.31:3001/report", {
 			reporterId: userId,
@@ -27,10 +26,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				console.log(err);
 			});
 	} else if (request.action === "getReport") {
-		$.get("http://5.135.184.31:3001/report", {
-			reportedName: channelName,
-			reportedId: channelUrl
-		})
+		$.post(
+			`http://5.135.184.31:3001/report/${channelName}`,
+			{
+				channelId: channelUrl
+			}
+		)
 			.done(resp => {
 				console.log("success GET report");
 				console.log(resp);
