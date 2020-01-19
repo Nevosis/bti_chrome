@@ -4,10 +4,75 @@ let reportDom = $(
 	`<div id='report-balancetoninfluence' class='report-balancetoninfluence' style='display:none; color:#c55e14; font-size:10px; font-weight:200'>0 reports</div>`
 );
 
+function initModal() {
+	$.get(chrome.extension.getURL("/modal.html"), function(modalDom) {
+		$("#content").append(modalDom);
+
+		window.onclick = function(event) {
+			if (event.target.id == "balancetoninfluence-myModal") {
+				$(".balancetoninfluence-modal").css("display", "none");
+				$("#balancetoninfluence-modal-comment").val("");
+			}
+		};
+
+		$(".balancetoninfluence-close").on("click", function() {
+			$(".balancetoninfluence-modal").css("display", "none");
+			$("#balancetoninfluence-modal-comment").val("");
+		});
+
+		$(".balancetoninfluence-modal-send").on("click", function() {
+			let channelNode = $(
+				"#upload-info > #channel-name > div > div > #text > a"
+			);
+			let commentNode = $("#balancetoninfluence-modal-comment");
+
+			if (
+				channelNode &&
+				commentNode &&
+				channelNode.length &&
+				commentNode.length
+			) {
+				let channelName = channelNode[0].innerText;
+				let channelUrl = channelNode[0].href;
+
+				let comment = commentNode[0].value;
+
+				// Send to background channelId to report
+				chrome.runtime.sendMessage(
+					{
+						action: "sendReport",
+						channelName,
+						channelUrl,
+						comment
+					},
+					response => {
+						if (response.success) {
+							$(".balancetoninfluence-modal-status").css(
+								"color",
+								"green"
+							);
+							$(".balancetoninfluence-modal-status").text(
+								"Report sent"
+							);
+						} else {
+							$(".balancetoninfluence-modal-status").css(
+								"color",
+								"red"
+							);
+							$(".balancetoninfluence-modal-status").text(
+								response.message
+							);
+						}
+					}
+				);
+			}
+		});
+	});
+}
+
 function getReport() {
 	if (document.URL.includes("youtube.com/watch?")) {
 		console.log("GET REPORT");
-		console.log(document.URL);
 
 		$("#report-balancetoninfluence").css("display", "none");
 
@@ -55,23 +120,9 @@ window.addEventListener("yt-navigate-finish", () => {
 });
 
 function initClick() {
-	$(".btn-balancetoninfluence").click(function() {
-		console.log("Report called");
-
-		let channelNode = $(
-			"#upload-info > #channel-name > div > div > #text > a"
-		);
-		if (channelNode && channelNode.length) {
-			let channelName = channelNode[0].innerText;
-			let channelUrl = channelNode[0].href;
-
-			// Send to background channelId to report
-			chrome.runtime.sendMessage({
-				action: "sendReport",
-				channelName,
-				channelUrl
-			});
-		}
+	$("#btn-balancetoninfluence").click(function() {
+		console.log("Open modal");
+		$(".balancetoninfluence-modal").css("display", "block");
 	});
 }
 
@@ -83,8 +134,10 @@ function initContentScript(first) {
 	if (bloc && bloc[0]) {
 		if (first) {
 			getReport();
+			initModal();
 		}
 		bloc.append(button);
+
 		$("#upload-info > #channel-name > div > div > #text").append(reportDom);
 		initClick();
 		justInCase = 10;
@@ -110,10 +163,7 @@ function updateDom() {
 // chrome tabs api only usable in background.js
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	console.log(request);
-	if (
-		request.action === "update" &&
-		request.url.includes("youtube.com/watch?")
-	) {
+	if (request.action === "update") {
 		let bloc = $("#btn-balancetoninfluence");
 		if (!(bloc && bloc[0])) {
 			initContentScript(false);

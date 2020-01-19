@@ -1,10 +1,131 @@
 .btn-balancetoninfluence {
-	padding:6px 0 6px 0;
-	font:Bold 13px Arial;
-	background:#d34836;
-	color:#fff;
-	width:90px;
-	border-radius:2px;
-	border:none;
-	cursor:pointer;
+	padding: 6px 0 6px 0;
+	font: Bold 13px Arial;
+	background: #d34836;
+	color: #fff;
+	width: 90px;
+	border-radius: 2px;
+	border: none;
+	cursor: pointer;
+}
+
+/* The Modal (background) */
+.balancetoninfluence-modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	padding-top: 100px; /* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0, 0, 0); /* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+	font-size: 15px;
+}
+
+/* Modal Content */
+.balancetoninfluence-modal-content {
+	position: relative;
+	background-color: #fefefe;
+	margin: auto;
+	padding: 0;
+	border: 1px solid #888;
+	width: 80%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: balancetoninfluenceAnimatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: balancetoninfluenceAnimatetop;
+	animation-duration: 0.4s;
+}
+
+/* Add Animation */
+@-webkit-keyframes balancetoninfluenceAnimatetop {
+	from {
+		top: -300px;
+		opacity: 0;
+	}
+	to {
+		top: 0;
+		opacity: 1;
+	}
+}
+
+@keyframes balancetoninfluenceAnimatetop {
+	from {
+		top: -300px;
+		opacity: 0;
+	}
+	to {
+		top: 0;
+		opacity: 1;
+	}
+}
+
+/* The Close Button */
+.balancetoninfluence-close {
+	color: white;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.balancetoninfluence-close:hover,
+.balancetoninfluence-close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
+.balancetoninfluence-modal h2 {
+	margin-top: 0.83em;
+	margin-bottom: 0.83em;
+}
+.balancetoninfluence-modal p {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+.balancetoninfluence-modal h3 {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+.balancetoninfluence-modal-header {
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
+}
+
+.balancetoninfluence-modal-body {
+	padding: 2px 16px;
+}
+
+.balancetoninfluence-modal-footer {
+	padding: 2px 16px;
+	text-align: right;
+}
+
+.balancetoninfluence-modal-status {
+	margin-right: 15px;
+}
+
+.balancetoninfluence-modal textarea {
+	max-width: 100%;
+	width: 100%;
+	padding: 10px;
+	padding-left: 15px;
+	box-sizing: border-box;
+}
+
+/* The Close Button */
+.balancetoninfluence-modal-send {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	padding: 12px 0 12px 0;
+	font: Bold 13px Arial;
+	background: #d34836;
+	color: #fff;
+	width: 90px;
+	border-radius: 2px;
+	border: none;
+	cursor: pointer;
 }

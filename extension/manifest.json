@@ -17,6 +17,8 @@
 			"js": ["jquery.min.js", "button.js", "contentScript.js"]
 		}
 	],
-
+	"web_accessible_resources": [
+		"modal.html"
+	],
 	"manifest_version": 2
 }

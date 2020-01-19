@@ -8,21 +8,24 @@ chrome.identity.getProfileUserInfo(identity => {
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	const { channelName, channelUrl } = request;
+	const { channelName, channelUrl, comment } = request;
 	if (request.action === "sendReport") {
 		$.post(backendUrl + "/report", {
 			reporterId: userId,
 			reporterMail: userEmail,
 			reportedName: channelName,
-			reportedId: channelUrl
+			reportedId: channelUrl,
+			comment
 		})
 			.done(resp => {
 				console.log("success send report");
 				console.log(resp);
+				sendResponse({success:true, message:resp.responseText})
 			})
 			.fail(err => {
 				console.log("error send report");
 				console.log(err);
+				sendResponse({success:false, message:err.responseText})
 			});
 	} else if (request.action === "getReport") {
 		$.post(`${backendUrl}/report/${channelName}`, {
