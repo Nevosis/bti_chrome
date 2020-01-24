@@ -3,7 +3,53 @@ var justInCase = 10;
 let reportDom = $(
 	`<div id='report-balancetoninfluence' class='report-balancetoninfluence' style='display:none; color:#c55e14; font-size:10px; font-weight:200; cursor:pointer'>0 reports</div>`
 );
+
 let reports = [];
+let currentPage = {
+	videoTitle: "",
+	channelTitle: ""
+};
+
+function sendReport() {
+	let channelNode = $("#upload-info > #channel-name > div > div > #text > a");
+	let commentNode = $("#balancetoninfluence-modal-comment");
+
+	if (
+		channelNode &&
+		commentNode &&
+		channelNode.length &&
+		commentNode.length
+	) {
+		let channelName = channelNode[0].innerText;
+		let channelUrl = channelNode[0].href;
+
+		let comment = commentNode[0].value;
+
+		// Send to background channelId to report
+		chrome.runtime.sendMessage(
+			{
+				action: "sendReport",
+				channelName,
+				channelUrl,
+				comment
+			},
+			response => {
+				if (response.success) {
+					$(".balancetoninfluence-modal-status").css(
+						"color",
+						"green"
+					);
+					$(".balancetoninfluence-modal-status").text("Report sent");
+				} else {
+					$(".balancetoninfluence-modal-status").css("color", "red");
+					$(".balancetoninfluence-modal-status").text(
+						response.message
+					);
+				}
+			}
+		);
+	}
+}
 
 function initModals() {
 	window.onclick = function(event) {
@@ -35,51 +81,7 @@ function initModals() {
 		});
 
 		$(".balancetoninfluence-modal-send").on("click", function() {
-			let channelNode = $(
-				"#upload-info > #channel-name > div > div > #text > a"
-			);
-			let commentNode = $("#balancetoninfluence-modal-comment");
-
-			if (
-				channelNode &&
-				commentNode &&
-				channelNode.length &&
-				commentNode.length
-			) {
-				let channelName = channelNode[0].innerText;
-				let channelUrl = channelNode[0].href;
-
-				let comment = commentNode[0].value;
-
-				// Send to background channelId to report
-				chrome.runtime.sendMessage(
-					{
-						action: "sendReport",
-						channelName,
-						channelUrl,
-						comment
-					},
-					response => {
-						if (response.success) {
-							$(".balancetoninfluence-modal-status").css(
-								"color",
-								"green"
-							);
-							$(".balancetoninfluence-modal-status").text(
-								"Report sent"
-							);
-						} else {
-							$(".balancetoninfluence-modal-status").css(
-								"color",
-								"red"
-							);
-							$(".balancetoninfluence-modal-status").text(
-								response.message
-							);
-						}
-					}
-				);
-			}
+			sendReport();
 		});
 	});
 }
@@ -96,6 +98,15 @@ function getReport() {
 			);
 			let channelName = channelNode[0].innerText;
 			let channelUrl = channelNode[0].href;
+
+			let titleNode = $(".title .ytd-video-primary-info-renderer");
+			if (titleNode && titleNode.length) {
+				console.log(titleNode);
+				currentPage.videoTitle = titleNode[0].innerText;
+				console.log(currentPage);
+			}
+
+			currentPage.channelTitle = channelName;
 
 			chrome.runtime.sendMessage(
 				{
@@ -119,7 +130,6 @@ function getReport() {
 					} else {
 						reports = [];
 						$("#report-balancetoninfluence").css("display", "none");
-						//$("#report-balancetoninfluence").text("none ON A DIT");
 					}
 				}
 			);
@@ -137,14 +147,34 @@ window.addEventListener("yt-navigate-finish", () => {
 
 function initClick() {
 	$("#btn-balancetoninfluence").click(function() {
-		console.log("Open modal");
+		$("#balancetoninfluence-modal-title").text(
+			"Report " + currentPage.channelTitle
+		);
 		$("#balancetoninfluence-modal").css("display", "block");
 	});
+
 	$("#report-balancetoninfluence").click(() => {
 		console.log("UNE FOIS");
+		$("#balancetoninfluence-modal-list-title").text(
+			"Reports sur " + currentPage.channelTitle
+		);
 		$(".balancetoninfluence-modal-comment-list").empty();
 		for (var i = 0; i < reports.length; i++) {
-			let newP = $("<p>" + reports[i].comment + "</p>");
+			let reportDate = new Date(reports[i].date);
+			let reportDateFormatted =
+				("0" + reportDate.getDate()).slice(-2) +
+				"/" +
+				("0" + (reportDate.getMonth() + 1)).slice(-2) +
+				"/" +
+				reportDate.getFullYear();
+
+			let newP = $(
+				"<div class='balancetoninfluence-modal-comment-line'><div style='font-size:9px; margin-bottom:5px'>" +
+					reportDateFormatted +
+					"</div><div style='overflow-wrap:break-word;white-space: pre-wrap;'>" +
+					reports[i].comment +
+					"</div></div>"
+			);
 			$(".balancetoninfluence-modal-comment-list").append(newP);
 		}
 		$("#balancetoninfluence-modal-list").css("display", "block");
