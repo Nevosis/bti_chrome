@@ -1,19 +1,33 @@
 var justInCase = 10;
 
 let reportDom = $(
-	`<div id='report-balancetoninfluence' class='report-balancetoninfluence' style='display:none; color:#c55e14; font-size:10px; font-weight:200'>0 reports</div>`
+	`<div id='report-balancetoninfluence' class='report-balancetoninfluence' style='display:none; color:#c55e14; font-size:10px; font-weight:200; cursor:pointer'>0 reports</div>`
 );
+let reports = [];
 
-function initModal() {
-	$.get(chrome.extension.getURL("/modal.html"), function(modalDom) {
+function initModals() {
+	window.onclick = function(event) {
+		if (
+			event.target.id == "balancetoninfluence-modal" ||
+			event.target.id == "balancetoninfluence-modal-list"
+		) {
+			$("#balancetoninfluence-modal").css("display", "none");
+			$("#balancetoninfluence-modal-list").css("display", "none");
+			$("#balancetoninfluence-modal-comment").val("");
+		}
+	};
+
+	$.get(chrome.extension.getURL("/modalList.html"), function(modalDom) {
 		$("#content").append(modalDom);
 
-		window.onclick = function(event) {
-			if (event.target.id == "balancetoninfluence-myModal") {
-				$(".balancetoninfluence-modal").css("display", "none");
-				$("#balancetoninfluence-modal-comment").val("");
-			}
-		};
+		$(".balancetoninfluence-close").on("click", function() {
+			$(".balancetoninfluence-modal").css("display", "none");
+			$("#balancetoninfluence-modal-comment").val("");
+		});
+	});
+
+	$.get(chrome.extension.getURL("/modal.html"), function(modalDom) {
+		$("#content").append(modalDom);
 
 		$(".balancetoninfluence-close").on("click", function() {
 			$(".balancetoninfluence-modal").css("display", "none");
@@ -94,6 +108,7 @@ function getReport() {
 						response.action === "getReportSuccess" &&
 						response.reports.length
 					) {
+						reports = response.reports;
 						$("#report-balancetoninfluence").css(
 							"display",
 							"block"
@@ -102,8 +117,9 @@ function getReport() {
 							response.reports.length + " reports"
 						);
 					} else {
+						reports = [];
 						$("#report-balancetoninfluence").css("display", "none");
-						$("#report-balancetoninfluence").text("none ON A DIT");
+						//$("#report-balancetoninfluence").text("none ON A DIT");
 					}
 				}
 			);
@@ -122,7 +138,16 @@ window.addEventListener("yt-navigate-finish", () => {
 function initClick() {
 	$("#btn-balancetoninfluence").click(function() {
 		console.log("Open modal");
-		$(".balancetoninfluence-modal").css("display", "block");
+		$("#balancetoninfluence-modal").css("display", "block");
+	});
+	$("#report-balancetoninfluence").click(() => {
+		console.log("UNE FOIS");
+		$(".balancetoninfluence-modal-comment-list").empty();
+		for (var i = 0; i < reports.length; i++) {
+			let newP = $("<p>" + reports[i].comment + "</p>");
+			$(".balancetoninfluence-modal-comment-list").append(newP);
+		}
+		$("#balancetoninfluence-modal-list").css("display", "block");
 	});
 }
 
@@ -134,7 +159,7 @@ function initContentScript(first) {
 	if (bloc && bloc[0]) {
 		if (first) {
 			getReport();
-			initModal();
+			initModals();
 		}
 		bloc.append(button);
 

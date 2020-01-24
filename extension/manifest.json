@@ -18,7 +18,8 @@
 		}
 	],
 	"web_accessible_resources": [
-		"modal.html"
+		"modal.html",
+		"modalList.html"
 	],
 	"manifest_version": 2
 }
