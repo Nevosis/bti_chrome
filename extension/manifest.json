@@ -2,7 +2,11 @@
 	"name": "Balance ton influenceur !",
 	"version": "1.0",
 	"description": "Description",
-
+	"icons": {
+		"16": "assets/icon16.png",
+		"48": "assets/icon48.png",
+		"128": "assets/icon128.png"
+	},
 	"permissions": ["tabs", "identity", "identity.email"],
 
 	"background": {
@@ -12,14 +16,14 @@
 
 	"content_scripts": [
 		{
-			"matches": ["http://www.youtube.com/*", "https://www.youtube.com/*"],
+			"matches": [
+				"http://www.youtube.com/*",
+				"https://www.youtube.com/*"
+			],
 			"css": ["style.css"],
 			"js": ["jquery.min.js", "button.js", "contentScript.js"]
 		}
 	],
-	"web_accessible_resources": [
-		"modal.html",
-		"modalList.html"
-	],
+	"web_accessible_resources": ["modal.html", "modalList.html"],
 	"manifest_version": 2
 }
